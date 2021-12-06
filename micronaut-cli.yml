@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.tarkiewicz
+testFramework: spock
+sourceLanguage: java
+buildTool: gradle
+features: [annotation-api, app-name, cache-caffeine, graalvm, gradle, http-client, java, java-application, jib, logback, lombok, mongo-reactive, netty-server, openapi, reactor, reactor-http-client, readme, security, security-annotations, security-jwt, shade, spock, testcontainers, yaml]
