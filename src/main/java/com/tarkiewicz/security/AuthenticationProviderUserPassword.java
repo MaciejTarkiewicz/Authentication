@@ -22,8 +22,8 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
     private final AccountRepository accountRepository;
 
     @Override
-    public Publisher<AuthenticationResponse> authenticate(@Nullable HttpRequest<?> httpRequest,
-                                                          AuthenticationRequest<?, ?> authenticationRequest) {
+    public Publisher<AuthenticationResponse> authenticate(final @Nullable HttpRequest<?> httpRequest,
+                                                          final AuthenticationRequest<?, ?> authenticationRequest) {
 
         return accountRepository.validCredentials((String) authenticationRequest.getIdentity(), (String) authenticationRequest.getSecret())
                 .filter(BooleanUtils::isTrue)
