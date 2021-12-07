@@ -55,7 +55,8 @@ public class AccountRepository {
     public Mono<String> register(final String username, final String password, final String email) {
         return Mono.from(getAccountCollection()
                         .insertOne(buildUserAccountModel(username, password, email)))
-                .map(InsertOneResult::wasAcknowledged).filter(BooleanUtils::isTrue)
+                .map(InsertOneResult::wasAcknowledged)
+                .filter(BooleanUtils::isTrue)
                 .switchIfEmpty(Mono.error(new MongodbConnectionException()))
                 .map(success -> username)
                 .onErrorResume(err -> Mono.error(new DuplicateKeyErrorException(username)));
