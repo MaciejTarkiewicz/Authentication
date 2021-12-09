@@ -1,4 +1,4 @@
-package com.tarkiewicz.repository.model;
+package com.tarkiewicz.domain.security.repository.model;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

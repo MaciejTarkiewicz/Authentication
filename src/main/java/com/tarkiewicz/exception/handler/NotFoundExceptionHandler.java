@@ -1,6 +1,6 @@
 package com.tarkiewicz.exception.handler;
 
-import com.tarkiewicz.endpoint.ErrorResponse;
+import com.tarkiewicz.endpoint.dto.response.ErrorResponse;
 import com.tarkiewicz.exception.NotFoundException;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;

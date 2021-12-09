@@ -1,9 +1,9 @@
 package com.tarkiewicz.endpoint;
 
-import com.tarkiewicz.endpoint.dto.Account;
-import com.tarkiewicz.endpoint.dto.RegisterDto;
-import com.tarkiewicz.endpoint.dto.SuccessResponse;
-import com.tarkiewicz.service.AccountService;
+import com.tarkiewicz.endpoint.dto.response.AccountResponse;
+import com.tarkiewicz.endpoint.dto.request.RegisterRequestDto;
+import com.tarkiewicz.endpoint.dto.response.SuccessResponse;
+import com.tarkiewicz.domain.account.service.AccountService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.*;
@@ -22,17 +22,16 @@ public class AccountEndpoint {
 
     @Post("/register")
     @Secured(SecurityRule.IS_ANONYMOUS)
-    public Mono<HttpResponse<SuccessResponse>> register(@Valid @Body final RegisterDto registerDto) {
-        return accountService.register(registerDto)
+    public Mono<HttpResponse<SuccessResponse>> register(@Valid @Body final RegisterRequestDto registerRequestDto) {
+        return accountService.register(registerRequestDto)
                 .map(username -> HttpResponse.status(HttpStatus.CREATED)
                         .body(SuccessResponse.of(String.format("Successfully created account with username: %s", username))));
     }
 
     @Get("/get-user")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public Mono<HttpResponse<Account>> getAccountByUsername(@QueryValue("username") final String username) {
+    public Mono<HttpResponse<AccountResponse>> getAccountByUsername(@QueryValue("username") final String username) {
         return accountService.getUser(username)
-                .map(account -> HttpResponse.status(HttpStatus.OK).body(account));
+                .map(accountResponse -> HttpResponse.status(HttpStatus.OK).body(accountResponse));
     }
-
 }

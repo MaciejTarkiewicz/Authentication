@@ -1,4 +1,4 @@
-package com.tarkiewicz.repository;
+package com.tarkiewicz.domain.security.repository;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -7,7 +7,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.tarkiewicz.exception.MongodbConnectionException;
-import com.tarkiewicz.repository.model.RefreshTokenModel;
+import com.tarkiewicz.domain.security.repository.model.RefreshTokenModel;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Singleton;

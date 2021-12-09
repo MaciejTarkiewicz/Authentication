@@ -40,9 +40,11 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
     implementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
     implementation("io.micronaut.spring:micronaut-spring")
+    implementation("io.micronaut.kafka:micronaut-kafka")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("ch.qos.logback:logback-classic")
     testImplementation("org.testcontainers:mongodb")
+    testImplementation("org.testcontainers:kafka")
     testImplementation("org.testcontainers:spock")
     testImplementation("org.testcontainers:testcontainers")
     compileOnly("org.graalvm.nativeimage:svm")
@@ -55,8 +57,8 @@ application {
     mainClass.set("com.tarkiewicz.Application")
 }
 java {
-    sourceCompatibility = JavaVersion.toVersion("17")
-    targetCompatibility = JavaVersion.toVersion("17")
+    sourceCompatibility = JavaVersion.toVersion("14")
+    targetCompatibility = JavaVersion.toVersion("14")
 }
 
 tasks {

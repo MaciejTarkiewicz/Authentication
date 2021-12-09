@@ -1,6 +1,6 @@
-package com.tarkiewicz.security;
+package com.tarkiewicz.domain.security.service;
 
-import com.tarkiewicz.repository.RefreshTokenRepository;
+import com.tarkiewicz.domain.security.repository.RefreshTokenRepository;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.errors.OauthErrorResponseException;
 import io.micronaut.security.token.event.RefreshTokenGeneratedEvent;
@@ -24,7 +24,7 @@ public class CustomRefreshTokenPersistence implements RefreshTokenPersistence {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public void persistToken(RefreshTokenGeneratedEvent event) {
+    public void persistToken(final RefreshTokenGeneratedEvent event) {
         if (event != null &&
                 event.getRefreshToken() != null &&
                 event.getAuthentication() != null &&

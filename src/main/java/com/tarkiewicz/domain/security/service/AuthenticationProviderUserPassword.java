@@ -1,6 +1,7 @@
-package com.tarkiewicz.security;
+package com.tarkiewicz.domain.security.service;
 
-import com.tarkiewicz.repository.AccountRepository;
+import com.tarkiewicz.domain.account.repository.AccountRepository;
+import com.tarkiewicz.integration.kafka.producer.LoggedUsernameClient;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.security.authentication.AuthenticationFailureReason;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
 public class AuthenticationProviderUserPassword implements AuthenticationProvider {
 
     private final AccountRepository accountRepository;
+    private final LoggedUsernameClient loggedUsernameClient;
 
     @Override
     public Publisher<AuthenticationResponse> authenticate(final @Nullable HttpRequest<?> httpRequest,
@@ -29,6 +31,7 @@ public class AuthenticationProviderUserPassword implements AuthenticationProvide
                 .filter(BooleanUtils::isTrue)
                 .doOnNext(success -> log.info("Successfully authentication user with username: {}", authenticationRequest.getIdentity()))
                 .map(valid -> AuthenticationResponse.success((String) authenticationRequest.getIdentity()))
-                .switchIfEmpty(Mono.error(AuthenticationResponse.exception(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH)));
+                .switchIfEmpty(Mono.error(AuthenticationResponse.exception(AuthenticationFailureReason.CREDENTIALS_DO_NOT_MATCH)))
+                .doOnSuccess(success -> loggedUsernameClient.sendUsername((String) authenticationRequest.getIdentity()));
     }
 }

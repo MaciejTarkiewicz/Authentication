@@ -1,4 +1,4 @@
-package com.tarkiewicz.security;
+package com.tarkiewicz.domain.security.service;
 
 import io.micronaut.core.annotation.NonNull;
 import jakarta.inject.Singleton;
@@ -13,13 +13,13 @@ public class BCryptPasswordEncoderService implements PasswordEncoder {
     private final PasswordEncoder delegate = new BCryptPasswordEncoder();
 
     @Override
-    public String encode(@NotBlank @NonNull CharSequence rawPassword) {
+    public String encode(@NotBlank @NonNull final CharSequence rawPassword) {
         return delegate.encode(rawPassword);
     }
 
     @Override
-    public boolean matches(@NotBlank @NonNull CharSequence rawPassword,
-                           @NotBlank @NonNull String encodedPassword) {
+    public boolean matches(@NotBlank @NonNull final CharSequence rawPassword,
+                           @NotBlank @NonNull final String encodedPassword) {
         return delegate.matches(rawPassword, encodedPassword);
     }
 }

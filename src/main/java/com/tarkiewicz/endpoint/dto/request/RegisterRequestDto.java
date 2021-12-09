@@ -1,4 +1,4 @@
-package com.tarkiewicz.endpoint.dto;
+package com.tarkiewicz.endpoint.dto.request;
 
 import io.micronaut.core.annotation.Creator;
 import io.micronaut.core.annotation.Introspected;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 
 @Introspected
 @Getter
-public class RegisterDto {
+public class RegisterRequestDto {
 
     @NotNull
     private final String username;
@@ -22,7 +22,7 @@ public class RegisterDto {
     private final String email;
 
     @Creator
-    public RegisterDto(final String username, final String password, final String email) {
+    public RegisterRequestDto(final String username, final String password, final String email) {
         this.username = username;
         this.password = password;
         this.email = email;

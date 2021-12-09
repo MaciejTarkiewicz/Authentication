@@ -1,12 +1,13 @@
-package com.tarkiewicz
+package com.tarkiewicz.domain.security
 
 import com.tarkiewicz.client.AppClient
 import com.tarkiewicz.configuration.TestContainerFixture
-import com.tarkiewicz.endpoint.dto.RegisterDto
+import com.tarkiewicz.endpoint.dto.request.RegisterRequestDto
+import com.tarkiewicz.integration.kafka.producer.LoggedUsernameClient
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.security.authentication.UsernamePasswordCredentials
-import io.micronaut.security.token.jwt.render.BearerAccessRefreshToken
+import io.micronaut.test.annotation.MockBean
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import spock.lang.Stepwise
@@ -23,12 +24,22 @@ class LoginSpec extends TestContainerFixture {
     @Inject
     AppClient appClient
 
+    @Inject
+    LoggedUsernameClient loggedUsernameClient
+
+    @MockBean(LoggedUsernameClient)
+    LoggedUsernameClient loggedUsernameClient() {
+        Mock(LoggedUsernameClient)
+    }
+
     def 'shouldProperLoginUser'() {
-        when:
-        appClient.register(new RegisterDto("username", "password", "user@domain.com"))
+        given: "Register user"
+        appClient.register(new RegisterRequestDto("username", "password", "user@domain.com"))
+
+        when: "Login user"
         def response = appClient.login(new UsernamePasswordCredentials("username", "password"))
 
-        then:
+        then: "Corrected response has been returned"
         response.username == "username"
         response.accessToken != null
         response.refreshToken != null
@@ -37,10 +48,10 @@ class LoginSpec extends TestContainerFixture {
 
     @Unroll
     def 'shouldNotLoginUser'() {
-        when:
+        when: "Try to login with incorrect data"
         appClient.login(new UsernamePasswordCredentials(username, password))
 
-        then:
+        then: "The user is not legged and a status of 401 with a valid message has been returned"
         final HttpClientResponseException exception = thrown()
         exception.response.status == HttpStatus.UNAUTHORIZED
         exception.message.contains(message)
@@ -49,6 +60,5 @@ class LoginSpec extends TestContainerFixture {
         username        | password        | message
         "username"      | "wrongPassword" | "Credentials Do Not Match"
         "wrongUsername" | "password"      | "User Not Found"
-
     }
 }

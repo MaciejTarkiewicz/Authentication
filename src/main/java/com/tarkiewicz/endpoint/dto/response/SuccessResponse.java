@@ -1,4 +1,4 @@
-package com.tarkiewicz.endpoint.dto;
+package com.tarkiewicz.endpoint.dto.response;
 
 import lombok.Data;
 

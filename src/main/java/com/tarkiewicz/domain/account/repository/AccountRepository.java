@@ -1,18 +1,16 @@
-package com.tarkiewicz.repository;
+package com.tarkiewicz.domain.account.repository;
 
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
-import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.*;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.result.UpdateResult;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoCollection;
-import com.tarkiewicz.endpoint.dto.Account;
+import com.tarkiewicz.domain.account.repository.model.UserAccountModel;
+import com.tarkiewicz.endpoint.dto.response.AccountResponse;
 import com.tarkiewicz.exception.DuplicateKeyErrorException;
 import com.tarkiewicz.exception.MongodbConnectionException;
 import com.tarkiewicz.exception.NotFoundException;
-import com.tarkiewicz.repository.model.UserAccountModel;
-import com.tarkiewicz.security.BCryptPasswordEncoderService;
+import com.tarkiewicz.domain.security.service.BCryptPasswordEncoderService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.security.authentication.AuthenticationFailureReason;
 import io.micronaut.security.authentication.AuthenticationResponse;
@@ -32,6 +30,7 @@ public class AccountRepository {
     private static final String USERNAME_ATTRIBUTE = "username";
     private static final String PASSWORD_ATTRIBUTE = "password";
     private static final String EMAIL_ATTRIBUTE = "email";
+    private static final String LAST_LOGGED_IN_ATTRIBUTE = "lastLoggedIn";
     private static final String CANNOT_FIND_USER_MSG = "Cannot find user with username: %s";
 
     private final MongoClient mongoClient;
@@ -71,17 +70,30 @@ public class AccountRepository {
                 .map(pass -> bCryptPasswordEncoderService.matches(password, pass));
     }
 
-    public Mono<Account> getUser(final String username) {
+    public Mono<AccountResponse> getUser(final String username) {
         return Mono.from(getAccountCollection()
                         .find(usernameQuery(username))
                         .projection(Projections.include(USERNAME_ATTRIBUTE, EMAIL_ATTRIBUTE)))
-                .map(user -> Account.of(user.getUsername(), user.getEmail()))
+                .map(user -> AccountResponse.of(user.getUsername(), user.getEmail()))
                 .switchIfEmpty(Mono.error(new NotFoundException(String.format(CANNOT_FIND_USER_MSG, username))));
+    }
+
+    public Mono<Boolean> updateLastLoggedIn(final String username) {
+        return Mono.from(getAccountCollection()
+                        .updateOne(usernameQuery(username), updateLastLoggedInQuery()))
+                .map(UpdateResult::wasAcknowledged)
+                .filter(BooleanUtils::isTrue)
+                .switchIfEmpty(Mono.error(new MongodbConnectionException()));
     }
 
     private Bson usernameQuery(final String username) {
         return Filters.and(Filters.eq(USERNAME_ATTRIBUTE, username));
     }
+
+    private Bson updateLastLoggedInQuery() {
+        return Updates.set(LAST_LOGGED_IN_ATTRIBUTE, Instant.now());
+    }
+
 
     private UserAccountModel buildUserAccountModel(final String username, final String password, final String email) {
         return UserAccountModel.of(username, bCryptPasswordEncoderService.encode(password), email, Instant.now());
