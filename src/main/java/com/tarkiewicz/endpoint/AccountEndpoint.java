@@ -4,13 +4,9 @@ import com.tarkiewicz.endpoint.dto.Account;
 import com.tarkiewicz.endpoint.dto.RegisterDto;
 import com.tarkiewicz.endpoint.dto.SuccessResponse;
 import com.tarkiewicz.service.AccountService;
-import io.micronaut.context.annotation.Parameter;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import lombok.AllArgsConstructor;
@@ -34,7 +30,7 @@ public class AccountEndpoint {
 
     @Get("/get-user")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public Mono<HttpResponse<Account>> getAccountByUsername(@Parameter final String username) {
+    public Mono<HttpResponse<Account>> getAccountByUsername(@QueryValue("username") final String username) {
         return accountService.getUser(username)
                 .map(account -> HttpResponse.status(HttpStatus.OK).body(account));
     }
