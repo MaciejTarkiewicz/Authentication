@@ -16,6 +16,7 @@ class RegisterSpec extends TestContainerFixture {
 
     def setup() {
         mongoDBContainer.start()
+        kafkaContainer.start()
     }
 
     @Inject
